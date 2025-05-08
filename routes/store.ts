@@ -5,10 +5,10 @@ import { storeSchema } from "../schemas.ts";
 export function createStoreHandler(store: TokenStore) {
     return async (ctx: Context) => {
         // API key auth
-        const apiKey = ctx.request.headers.get("x-api-key");
-        if (apiKey !== Deno.env.get("STORE_API_KEY")) {
+        const apiKey = ctx.request.headers.get("gis-api-key");
+        if (apiKey !== Deno.env.get("DEV_API_KEY")) {
             ctx.response.status = 401;
-            await ctx.response.write(new TextEncoder().encode(JSON.stringify({ error: "Unauthorized" })));
+            ctx.response.body = { status: 401, error: "Unauthorized" }
             return;
         }
 
