@@ -1,0 +1,22 @@
+import { MongoClient } from "https://deno.land/x/mongo@v0.32.0/mod.ts";
+import type { TokenStore, TokenDoc } from "../interfaces.ts";
+
+const client = new MongoClient();
+await client.connect(Deno.env.get("MONGO_URI") ?? "mongodb://localhost:27017");
+const db = client.database("token_store");
+
+export class MongoTokenStore implements TokenStore {
+    private collection = db.collection<TokenDoc>("tokens");
+
+    async get(user_id: string): Promise<TokenDoc | null> {
+        return await this.collection.findOne({ _id: user_id });
+    }
+
+    async upsert(doc: TokenDoc): Promise<void> {
+        await this.collection.updateOne(
+            { _id: doc.user_id },
+            { $set: { access_token: doc.access_token, refresh_token: doc.refresh_token, expires_at: doc.expires_at } },
+            { upsert: true }
+        );
+    }
+}
