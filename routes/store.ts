@@ -19,11 +19,11 @@ export function createStoreHandler(store: TokenStore) {
             const expires_at = Date.now() + expires_in * 1000;
             await store.upsert({ user_id, access_token, refresh_token, expires_at });
             ctx.response.status = 200;
-            await ctx.response.write(new TextEncoder().encode(JSON.stringify({ status: "stored" })));
+            ctx.response.body = { status: "stored" };
         } catch (err) {
             console.error("/auth/store error:", err);
             ctx.response.status = 400;
-            await ctx.response.write(new TextEncoder().encode(JSON.stringify({ error: "Invalid request" })));
+            ctx.response.body = { status: 400, error: "Invalid request" };
         }
     };
 }
