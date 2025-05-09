@@ -1,4 +1,4 @@
-export interface TokenDoc {
+export interface TokenSchema {
     user_id: string;
     access_token: string;
     refresh_token: string;
@@ -6,6 +6,6 @@ export interface TokenDoc {
 }
 
 export interface TokenStore {
-    get(user_id: string): Promise<TokenDoc | null>;
-    upsert(doc: TokenDoc): Promise<void>;
+    get(user_id: string): Promise<TokenSchema | null>;
+    upsert(doc: TokenSchema): Promise<void>;
 }

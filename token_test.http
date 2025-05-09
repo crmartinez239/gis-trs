@@ -1,0 +1,9 @@
+### GET request with parameter
+@baseURL = http://localhost:3000
+@endpoint = /auth/token/123456789
+@apiKey = testkeytestkey123
+
+# Good request with key
+GET {{baseURL}}{{endpoint}}
+Accept: application/json
+gis-api-key: {{apiKey}}
