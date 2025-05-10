@@ -1,0 +1,17 @@
+@dev_base_url = http://localhost:3000
+@code_endpoint = /code
+
+@user_id = 912474dc-25c9-4bd1-9d95-c172210892d4
+@redirect_url = chrome-extension://hfeoapcldkocaoikhnhjfhffmlaeccoe/ui/redirect/redirect.html
+@api_key = testkeytestkey123
+
+### Valid new token post
+POST {{dev_base_url}}{{code_endpoint}}
+Content-Type: application/json
+gis-api-key: {{api_key}}
+
+{
+  "user_id": "{{user_id}}",
+  "code": "eyJraWQiOiI2MjAiLCJhbGciOiJSUzUxMiJ9.eyJzYyI6ImNhbGxzLnYyLmluaXRpYXRlIHVzZXJzLnYxLmxpbmVzLnJlYWQiLCJzdWIiOiI3MDQ2OTM3NTkzMDQ0MTExNTY5IiwiYXVkIjoiN2ZhNDM0OTQtMGRlYS00MzgwLTg4MDQtNzgxZGE2YWJlNzM1Iiwib2duIjoicHdkIiwibHMiOiJmZjRiNjZlYi02ZmU5LTRjMzQtOWYzNy1lZTljMTYyMGMwMTgiLCJ0eXAiOiJjIiwiZXhwIjoxNzQ2OTEyODU3LCJpYXQiOjE3NDY5MTIyNTcsInVyaSI6ImNocm9tZS1leHRlbnNpb246Ly9oZmVvYXBjbGRrb2Nhb2lraG5oamZoZmZtbGFlY2NvZS91aS9yZWRpcmVjdC9yZWRpcmVjdC5odG1sIiwianRpIjoiMDM3MmRhNDgtMzg2YS00ODhlLWFkOTktYWNjZDAzODU1Y2NhIn0.zOjlbJ6qnbET2MO7aeNu1o4i_C0uwknkXwXqggB2wbrIOhQDnWQnzFBkn26MdwXXABjyNWb4rhJ8gU5HHwHlPalUphstDvaiFi1ZZLbELMDT2JlumqBOKrtvLfJrJIhNXUFzre1J7RuaFurg0TMN3Cc16eXQQL3VHN1Z8klSN_8EL5bAViUiVKtYSzhraPHmUmlVwUjXrVzYcWR71LowR_9ozr5XIek3R-_rcEXtHIlNQj061rFlaL4NfRaNIuRFuxtEWFBUMfLd_NV6qOAqJNhmAL4qAuOJfX8ElfcxKIBpL24jhD1gWcJFL8u1AUFNLunbsTu0k4ab1eaNwZpPsQ",
+  "redirect_uri": "{{redirect_url}}"
+}

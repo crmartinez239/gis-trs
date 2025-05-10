@@ -1,22 +1,46 @@
 import { Context, helpers } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import type { TokenStore } from "../interfaces.ts";
+import {TokenStore, StoredTokenSchema} from "../shared/interfaces.ts";
 
-//const { getQuery } = helpers;
+const { getQuery } = helpers;
 
-export function createTokenHandler(_store: TokenStore) {
+export function createTokenHandler(store: TokenStore) {
     return async (ctx: Context) => {
+        const { user_id } = getQuery(ctx, { mergeParams: true });
 
-        ctx.response.status = 200;
-        ctx.response.body = { message: "I found the gis-api-key" };
+        try {
+            const tokenDoc = await store.get(user_id);
 
-        // const { user_id } = getQuery(ctx, { mergeParams: true });
-        //
-        // const tokenDoc = await store.get(user_id);
-        // if (!tokenDoc) {
-        //     ctx.response.status = 404;
-        //     ctx.response.body = { error: "User not found" }
-        //     return;
-        // }
+            // could not retrieve token for user,
+            if (!tokenDoc) {
+                ctx.response.status = 404;
+                ctx.response.body = { error: "User not found" }
+                return;
+            }
+
+            if (Date.now() < tokenDoc.expires_at) {
+                console.log("Retrieved token for user: ", user_id);
+                ctx.response.status = 200;
+                ctx.response.body = { access_token: tokenDoc.access_token }
+                return;
+            }
+
+            const auth_token = btoa(`${Deno.env.get("GOTO_CLIENT_ID")}:${Deno.env.get("GOTO_CLIENT_SECRET")}`);
+
+            const params = new URLSearchParams({
+                grant_type: "refresh_token",
+                refresh_token: tokenDoc.refresh_token,
+                client_id: Deno.env.get("GOTO_CLIENT_ID")!,
+                client_secret: Deno.env.get("GOTO_CLIENT_SECRET")!,
+            });
+
+            console.log("Token expired for user: ", user_id);
+            ctx.response.status = 400;
+            ctx.response.body = { error: "Token expired" };
+        } catch (_err) {
+                console.error("Could not get get user info: ", user_id);
+                ctx.response.status = 500;
+                ctx.response.body = { error: "Internal server error" };
+        }
         //
         // if (Date.now() < tokenDoc.expires_at) {
         //     ctx.response.status = 200;
@@ -45,5 +69,6 @@ export function createTokenHandler(_store: TokenStore) {
         //     ctx.response.status = 500;
         //     ctx.response.body = { error: "Failed to refresh token" };
         // }
+
     };
 }
