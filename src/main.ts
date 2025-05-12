@@ -4,7 +4,7 @@ import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import { DiskTokenStore } from "./providers/token/disk.ts";
 import { DiskUserStore } from "./providers/user/disk.ts";
 
-import { apiKeyCheck } from "./middleware/key_check.ts";
+import { apiKeyCheckMiddleware } from "./middleware/api-key-check.ts";
 import { createTokenHandler } from "./routes/token.ts";
 import { createCodeHandler } from "./routes/code.ts";
 import { createRegisterHandler } from "./routes/register.ts";
@@ -25,7 +25,7 @@ app.use(oakCors({
     allowedHeaders: ["Content-Type"],
 }));
 
-//app.use(apiKeyCheck);
+app.use(apiKeyCheckMiddleware(userStore));
 
 app.use(router.routes());
 app.use(router.allowedMethods());
