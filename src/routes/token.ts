@@ -1,5 +1,5 @@
 import { Context, helpers } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import { TokenStore, StoredTokenSchema } from "../shared/interfaces.ts";
+import { TokenStore, StoredTokenSchema } from "../interfaces/token.ts";
 import {getTokenFromRefresh} from "../shared/goto.ts";
 
 const { getQuery } = helpers;

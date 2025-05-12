@@ -1,4 +1,4 @@
-import { Token, TokenError } from "./interfaces.ts";
+import { Token, TokenError } from "../interfaces/token.ts";
 
 export async function getTokenFromCode(code: string) {
     const client_id = Deno.env.get("GOTO_CLIENT_ID") ?? "";

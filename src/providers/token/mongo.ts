@@ -1,5 +1,5 @@
 // import { MongoClient } from "https://deno.land/x/mongo@v0.32.0/mod.ts";
-// import type { TokenStore, TokenStore } from "../shared/interfaces.ts";
+// import type { TokenStore, TokenStore } from "../shared/token.ts";
 //
 // const client = new MongoClient();
 // await client.connect(Deno.env.get("MONGO_URI") ?? "mongodb://localhost:27017");

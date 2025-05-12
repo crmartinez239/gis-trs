@@ -1,7 +1,7 @@
 // This route will handle retrieving a token with a new oauth code
 
 import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import {StoredTokenSchema, TokenStore} from "../shared/interfaces.ts";
+import {StoredTokenSchema, TokenStore} from "../interfaces/token.ts";
 import { tokenFromCodeSchema } from "../shared/schemas.ts";
 import { getTokenFromCode } from "../shared/goto.ts";
 

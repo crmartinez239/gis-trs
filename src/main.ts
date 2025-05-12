@@ -1,16 +1,22 @@
 import { Application, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
-import { DiskTokenStore } from "./providers/disk.ts";
+
+import { DiskTokenStore } from "./providers/token/disk.ts";
+import { DiskUserStore } from "./providers/user/disk.ts";
+
 import { apiKeyCheck } from "./middleware/key_check.ts";
 import { createTokenHandler } from "./routes/token.ts";
 import { createCodeHandler } from "./routes/code.ts";
+import { createRegisterHandler } from "./routes/register.ts";
 
-const store = new DiskTokenStore();
+const tokenStore = new DiskTokenStore();
+const userStore = new DiskUserStore();
 
 const router = new Router();
 
-router.post("/code", createCodeHandler(store));
-router.get("/token/:user_id", createTokenHandler(store));
+router.post("/register", createRegisterHandler(userStore));
+router.post("/code", createCodeHandler(tokenStore));
+router.get("/token/:user_id", createTokenHandler(tokenStore));
 
 const app = new Application();
 app.use(oakCors({
@@ -19,7 +25,7 @@ app.use(oakCors({
     allowedHeaders: ["Content-Type"],
 }));
 
-app.use(apiKeyCheck);
+//app.use(apiKeyCheck);
 
 app.use(router.routes());
 app.use(router.allowedMethods());
