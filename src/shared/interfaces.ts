@@ -7,7 +7,7 @@ export interface StoredTokenSchema {
     loa: number
     token_type: string,
     expires_in: number,
-    scope: string[],
+    scope: string,
     principal: string
 }
 
@@ -16,13 +16,16 @@ export interface TokenStore {
     upsert(doc: StoredTokenSchema): Promise<void>;
 }
 
+
+
+
 export interface Token {
     access_token: string,
     refresh_token: string,
-    loa: number
+    loa: number,
     token_type: string,
     expires_in: number,
-    scope: string[],
+    scope: string,
     principal: string
 }
 

@@ -21,7 +21,7 @@ export const storedTokenSchema = z.object({
     loa: z.number().positive(),
     token_type: z.string().min(1),
     expires_in: z.number().positive(),
-    scope: z.string().array(),
+    scope: z.string().min(1),
     principal: z.string().min(1),
 });
 
