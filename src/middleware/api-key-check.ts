@@ -1,17 +1,22 @@
-// src/middleware/api_key_check.ts
+// src/middleware/api-key-check.ts
 import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { UserStore } from "../interfaces/user.ts";
 
 /**
  * Factory to create API key authentication middleware for Oak.
  * @param userStore - Provides access to stored user records for validation
+ * @param skipPaths - Array of URL paths to bypass the auth check
  * @returns Middleware function that enforces API key checks on incoming requests
  */
-export function apiKeyCheckMiddleware(userStore: UserStore) {
+export function apiKeyCheckMiddleware(
+    userStore: UserStore,
+    skipPaths: string[] = ["/register"],
+) {
     return async (ctx: Context, next: () => Promise<unknown>) => {
-        // 1️⃣ Allow open access to the registration endpoint
-        if (ctx.request.url.pathname === "/register") {
-            // Skip auth for registration and proceed
+        const path = ctx.request.url.pathname;
+
+        // 1️⃣ Skip auth on configured paths
+        if (skipPaths.includes(path)) {
             return await next();
         }
 
@@ -24,7 +29,7 @@ export function apiKeyCheckMiddleware(userStore: UserStore) {
             console.error("Unauthorized request: missing headers");
             ctx.response.status = 401;
             ctx.response.body = { error: "Unauthorized" };
-            return; // Do not proceed further
+            return;
         }
 
         try {
@@ -39,14 +44,14 @@ export function apiKeyCheckMiddleware(userStore: UserStore) {
                 });
                 ctx.response.status = 401;
                 ctx.response.body = { error: "Unauthorized" };
-                return; // Stop processing
+                return;
             }
         } catch (err) {
             // 6️⃣ Handle unexpected errors from the store
             console.error("API key check error:", err);
             ctx.response.status = 500;
             ctx.response.body = { error: "Internal server error" };
-            return; // Stop processing
+            return;
         }
 
         // 7️⃣ All checks passed: forward to the next middleware or route handler

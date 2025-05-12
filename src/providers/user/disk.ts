@@ -7,6 +7,7 @@ export class DiskUserStore implements UserStore {
     }
 
     async get(id: string): Promise<User | null> {
+        if (!await this.exists(id)) return null;
         try {
             const raw = await Deno.readTextFile(`./test_db/user/${id}.json`);
             const json = JSON.parse(raw);
