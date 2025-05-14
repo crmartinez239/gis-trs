@@ -10,6 +10,7 @@ import { apiKeyCheckMiddleware } from "./middleware/api-key-check.ts";
 import { createTokenHandler } from "./routes/token.ts";
 import { createCodeHandler } from "./routes/code.ts";
 import { createRegisterHandler } from "./routes/register.ts";
+import { createClientHandler } from "./routes/client.ts";
 
 const supabaseClient = supabase;
 const userStore = new SupabaseUserStore(supabaseClient);
@@ -20,6 +21,7 @@ const router = new Router();
 router.post("/register", createRegisterHandler(userStore));
 router.post("/code", createCodeHandler(tokenStore));
 router.get("/token", createTokenHandler(tokenStore));
+router.get("/client", createClientHandler());
 
 const app = new Application();
 app.use(oakCors({
