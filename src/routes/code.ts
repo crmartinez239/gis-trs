@@ -15,9 +15,9 @@ export function createCodeHandler(_store: TokenStore) {
         try {
             const user_id = ctx.state.user_id as string; // There will always be a valid user id here
             const { value } = ctx.request.body({ type: "json" });
-            const { code, redirect_uri } = await value;
+            const { code } = await value;
 
-            const validationResult = tokenRequestSchema.safeParse({code, redirect_uri });
+            const validationResult = tokenRequestSchema.safeParse({ code });
 
             if (!validationResult.success) {
                 console.error("Invalid request:", validationResult.error.flatten().fieldErrors);

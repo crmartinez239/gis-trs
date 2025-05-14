@@ -26,6 +26,5 @@ export const storedTokenSchema = z.object({
 
 // Used for validating incoming request for a new user in the createCodeHandler
 export const tokenRequestSchema = z.object({
-    code: z.string().min(1),
-    redirect_uri: z.string().url()
+    code: z.string().min(1)
 });
