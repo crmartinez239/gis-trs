@@ -27,14 +27,6 @@ export async function getTokenFromCode(code: string) {
 
     const body = await response.json();
 
-    console.log("Attempted to get token from code: ", {
-        client_id,
-        client_secret,
-        redirect_uri,
-        token_endpoint,
-        code,
-    });
-
     switch (response.status) {
         case 200:
             return body as Token;
