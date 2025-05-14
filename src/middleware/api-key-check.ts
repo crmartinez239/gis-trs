@@ -15,16 +15,16 @@ export function apiKeyCheckMiddleware(
     return async (ctx: Context, next: () => Promise<unknown>) => {
         const path = ctx.request.url.pathname;
 
-        // 1️⃣ Skip auth on configured paths
+        // Skip auth on configured paths
         if (skipPaths.includes(path)) {
             return await next();
         }
 
-        // 2️⃣ Extract the API key and user ID from request headers
+        // Extract the API key and user ID from request headers
         const suppliedKey = ctx.request.headers.get("gis-api-key");
         const suppliedId = ctx.request.headers.get("gis-user-id");
 
-        // 3️⃣ Reject requests missing either header
+        // Reject requests missing either header
         if (!suppliedKey || !suppliedId) {
             console.error("Unauthorized request: missing headers");
             ctx.response.status = 401;
@@ -33,10 +33,10 @@ export function apiKeyCheckMiddleware(
         }
 
         try {
-            // 4️⃣ Lookup the user record by user ID
+            // Lookup the user record by user ID
             const user = await userStore.get(suppliedId);
 
-            // 5️⃣ Reject if user not found or API key mismatch
+            // Reject if user not found or API key mismatch
             if (!user || user.api_key !== suppliedKey) {
                 console.error("Unauthorized request: invalid credentials", {
                     user_id: suppliedId,
@@ -47,14 +47,15 @@ export function apiKeyCheckMiddleware(
                 return;
             }
         } catch (err) {
-            // 6️⃣ Handle unexpected errors from the store
+            // Handle unexpected errors from the store
             console.error("API key check error:", err);
             ctx.response.status = 500;
             ctx.response.body = { error: "Internal server error" };
             return;
         }
 
-        // 7️⃣ All checks passed: forward to the next middleware or route handler
+        ctx.state.user_id = suppliedId;
+        // All checks passed: forward to the next middleware or route handler
         await next();
     };
 }

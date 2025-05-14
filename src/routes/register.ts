@@ -5,16 +5,16 @@ import { generateApiKey, generateUserId } from "../shared/keygen.ts";
 export function createRegisterHandler(store: UserStore) {
     return async (ctx: Context) => {
         try {
-            const user_id = generateUserId();
+            const id = generateUserId();
             const api_key = generateApiKey();
             const created_at = Date.now();
 
-            await store.upsert(user_id, { api_key, created_at });
+            await store.upsert({ id, api_key, created_at });
 
-            console.log("New user registered:", { user_id, api_key, created_at });
+           console.log("New user registered:", { id, api_key, created_at });
 
             ctx.response.status = 201;
-            ctx.response.body = { user_id, api_key, created_at };
+            ctx.response.body = { id, api_key, created_at };
         } catch (err) {
             console.error("Route /register error:", err);
             ctx.response.status = 500;

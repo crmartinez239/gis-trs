@@ -1,44 +1,46 @@
-import { Context, helpers } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import { TokenStore, StoredTokenSchema } from "../interfaces/token.ts";
+import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+import { TokenStore, StoredToken } from "../interfaces/token.ts";
 import {getTokenFromRefresh} from "../shared/goto.ts";
+import getRefreshMargin from "../shared/expiry.ts";
 
-const { getQuery } = helpers;
+export function createTokenHandler(tokenStore: TokenStore) {
 
-export function createTokenHandler(_store: TokenStore) {
+    const REFRESH_MARGIN = getRefreshMargin();
+
     return async (ctx: Context) => {
-        const { user_id } = getQuery(ctx, { mergeParams: true });
+        const user_id = ctx.state.user_id as string;
 
         try {
-            const tokenDoc = await _store.get(user_id);
+            const userToken = await tokenStore.get(user_id);
 
             // could not retrieve token for user,
-            if (!tokenDoc) {
+            if (!userToken) {
                 ctx.response.status = 404;
-                ctx.response.body = { error: "User not found" }
+                ctx.response.body = { error: "User token not found" }
                 return;
             }
 
-            if (Date.now() < tokenDoc.expires_at) {
+            if (Date.now() < userToken.expires_at) {
                 console.log("Retrieved token for user: ", user_id);
                 ctx.response.status = 200;
-                ctx.response.body = { access_token: tokenDoc.access_token }
+                ctx.response.body = { access_token: userToken.access_token }
                 return;
             }
 
-            const response = await getTokenFromRefresh(tokenDoc.refresh_token);
+            const response = await getTokenFromRefresh(userToken.refresh_token);
 
             if ("access_token" in response) {
-                const expires_at = Date.now() + response.expires_in * 1000;
-                const newTokenDoc: StoredTokenSchema = {
+                const expires_at = Date.now() + (response.expires_in - REFRESH_MARGIN) * 1000;
+                const newUserToken: StoredToken = {
                     ...response,
-                    refresh_token: response.refresh_token || tokenDoc.refresh_token,
-                    expires_at: expires_at,
-                    user_id: user_id,
+                    user_id,
+                    expires_at,
+                    refresh_token: response.refresh_token || userToken.refresh_token,
                 }
-                await _store.upsert(newTokenDoc);
+                await tokenStore.upsert(newUserToken);
                 console.log("New token from refresh successful: user_id:", user_id);
                 ctx.response.status = 200;
-                ctx.response.body = { "access_token": newTokenDoc.access_token };
+                ctx.response.body = { access_token: newUserToken.access_token };
             } else {
                 console.error("Error getting token from code:", response.error_description);
                 ctx.response.status = response.status;
