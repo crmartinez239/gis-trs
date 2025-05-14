@@ -35,6 +35,4 @@ app.use(router.allowedMethods());
 
 const _port = Number(Deno.env.get("PORT")) || 3000;
 
-//await app.listen({ port: _port });
-
-export default app.handle;
+await app.listen({ port: _port });
