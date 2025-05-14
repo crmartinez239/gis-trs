@@ -33,6 +33,8 @@ app.use(apiKeyCheckMiddleware(userStore));
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const port = Number(Deno.env.get("PORT")) || 3000;
+const _port = Number(Deno.env.get("PORT")) || 3000;
 
-await app.listen({ port });
+//await app.listen({ port: _port });
+
+export default app.handle;
